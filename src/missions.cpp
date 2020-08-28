@@ -76,8 +76,8 @@ void Interface::fourth_mission()
 {
     std::stringstream tmp;
 
-    tmp << "Thanks testing the game\n";
-    tmp << "this game is still in\n";
+    tmp << "Thanks for testing the\n";
+    tmp << "game, it is still in\n";
     tmp << "development.\n";
 
     log = tmp.str();
