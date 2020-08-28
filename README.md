@@ -2,5 +2,6 @@
 SDL based RPG game (beta test)
 
 ## Dependencies
-SDL_ttf
-SDL_image
+SDL2</br>
+SDL2_ttf</br>
+SDL2_image</br>
