@@ -1,5 +1,16 @@
 #include "../include/interface.h"
 
+void Interface::quest_completed(int xp)
+{
+    if (player->setexp(xp))
+        set_screen_log("You leveled up");
+    else
+        set_screen_log("You earned " + std::to_string(xp) + " exp from a quest");
+
+    current_quest++;
+    to_completed = {0, 0};
+}
+
 void Interface::first_mission()
 {
     to_completed.second = 1;
@@ -21,11 +32,8 @@ void Interface::first_mission()
 
     log = tmp.str();
 
-    if (to_completed.first == to_completed.second) {
-        player->setexp(100);
-        current_quest++;
-        to_completed = {0, 0};
-    }
+    if (to_completed.first == to_completed.second)
+        quest_completed(100);
 }
 
 void Interface::second_mission()
@@ -38,16 +46,13 @@ void Interface::second_mission()
     tmp << "the Northeast.\n\n";
     tmp << "Completed (" << to_completed.first << "/" << to_completed.second << ")\n";
 
-    if (player->isInDungeon() && player->getdungeonrank() == 0)
+    if (player->isInDungeon() && player->getDungeonRank() == 0)
         to_completed.first = 1;
     
     log = tmp.str();
 
-    if (to_completed.first == to_completed.second) {
-        player->setexp(100);
-        current_quest++;
-        to_completed = {0, 0};
-    }
+    if (to_completed.first == to_completed.second)
+        quest_completed(100);
 }
 
 void Interface::third_mission()
@@ -57,7 +62,7 @@ void Interface::third_mission()
     std::stringstream tmp;
 
     tmp << "Monsters are getting hard\n";
-    tmp << "you need to go stronger.\n";
+    tmp << "you need to go stronger.\n\n";
     tmp << "Get level 5\n\n";
     tmp << "Completed (" << to_completed.first << "/" << to_completed.second << ")\n";
 
@@ -65,11 +70,8 @@ void Interface::third_mission()
     
     log = tmp.str();
 
-    if (to_completed.first >= to_completed.second) {
-        player->setexp(100);
-        current_quest++;
-        to_completed = {0, 0};
-    }
+    if (to_completed.first >= to_completed.second)
+        quest_completed(100);
 }
 
 void Interface::fourth_mission()
