@@ -1,12 +1,12 @@
 #include "../include/game.h"
 
 int main() {
-	Game game("RPG Reborn", 1088, 608);
+	Game reborn("RPG Reborn", 1088, 608);
 	
-	while (game.isRunning()) {
-		game.event_loop();
-		game.update();
-		game.render();
+	while (reborn.isRunning()) {
+		reborn.event_loop();
+		reborn.update();
+		reborn.render();
 	}
 
 	return 0;
