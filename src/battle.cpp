@@ -1,10 +1,11 @@
 #include "../include/interface.h"
 
-Battle::Battle(Enemy* one)
+Battle::Battle(Enemy* theone)
 {
-    enemy = one;
+    enemy = theone;
 
     time = SDL_GetTicks();
+
     turn = 0;
     log = "A monster has appeared";
 
@@ -12,7 +13,7 @@ Battle::Battle(Enemy* one)
     sel = { 51, 112, 217 };
     size = 10;
 
-    menu = { "Attack", "Heal", "Escape" };
+    menu = { "Melee", "Heal", "Escape" };
 
     selection = 0;
 }
@@ -34,7 +35,7 @@ void Battle::init(Interface* sys)
     std::stringstream title;
 
     title << "Rank";
-    
+
     switch (enemy->getrank()) {
         case 2: title << " E "; break;
         case 3: title << " D "; break;
@@ -48,7 +49,6 @@ void Battle::init(Interface* sys)
     }
 
     title << enemy->getname();
-    
     Texture::drawText(title.str().c_str(), fg, size, 15, 38);
 
     // menu
@@ -59,29 +59,37 @@ void Battle::init(Interface* sys)
     }
 
     // player turn
-    if (SDL_GetTicks() - time > 200 && turn == 0) {
+    if (turn == 0 && SDL_GetTicks() - time > 200) {
         Battle::events(sys);
     }
 
     // enemy turn
     if (turn == 1 && SDL_GetTicks() - time > 1000) {
         int dmg_r = rand() % (enemy->getrank() * 10) + 1;
+
         sys->player->dmg(dmg_r);
+
         log = "You lost " + std::to_string(dmg_r) + " of health due to ";
         log += enemy->getname() + "'s attack";
+
         turn -= 1;
     }
 
     Texture::drawText(log.c_str(), sel, size, 15, 370);
 
     if (enemy->gethp().second <= 0) {
-        sys->player->setexp(enemy->expfromdeath());
         enemy->reset_hp();
+
+        if (sys->player->setexp(enemy->expfromdeath()))
+            sys->set_screen_log("You leveled up");
+        else
+            sys->set_screen_log("You earned " + std::to_string(enemy->expfromdeath()) + " exp");
+        
         sys->toggle_battle(false, NULL);
     } else if (sys->player->gethp().second <= 0) {
         sys->player->kill();
-        sys->toggle_battle(false, NULL);
         sys->player->setDungeon(false, 0);
+        sys->toggle_battle(false, NULL);
     }
 }
 
@@ -98,11 +106,10 @@ void Battle::select_menu(int item)
             break;
     }
 
-    if (selection == menu.size()) {
+    if (selection == menu.size())
         selection = 0;
-    } else if (selection < 0) {
+    else if (selection < 0)
         selection = menu.size() - 1;
-    }
 }
 
 void Battle::events(Interface* sys)
@@ -124,13 +131,13 @@ void Battle::events(Interface* sys)
             } break;
             case 1: {
                 if (sys->player->getmp().second >= 10) {
-                    int healing = rand() % sys->player->gethp().first;
+                    int healing = rand() % 50 + 1;
                     sys->player->heal(healing);
                     sys->player->mpused(10);
                     log = "You healed " + std::to_string(healing) + " of health";
                 } else {
                     log = "You don't have enough mana";
-                    turn -= 1;
+                    turn = -1;
                 }
             } break;
             case 2:
