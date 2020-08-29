@@ -12,6 +12,8 @@ class Enemy {
 
     std::pair<int, int> hp;
     int rank;
+
+    Uint32 enemy_tick;
 public:
     Enemy(const char*, int, std::string, int);
     ~Enemy();
