@@ -14,21 +14,24 @@ class Interface {
     SDL_Texture* action_interface;
     bool action_on;
 
-    std::string log;
+    std::string log, in_screen_log;
     std::pair<int,int> to_completed;
 
     std::vector<void (Interface::*)()> quest_list;
     int current_quest;
 
     const Uint8 *interface_event;
+    Uint32 interface_tick;
 public:
     Interface(Player*);
     ~Interface();
 
     void render();
+    void set_screen_log(std::string);
 
     void quest();
     int get_current_quest();
+    void quest_completed(int);
 
     void events(const Uint8*);
 
