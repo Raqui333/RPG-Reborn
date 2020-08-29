@@ -226,7 +226,7 @@ std::pair<int, int> Player::getexp()
     return exp;
 }
 
-void Player::setexp(int new_xp)
+bool Player::setexp(int new_xp)
 {
     exp.second += new_xp;
 
@@ -238,7 +238,11 @@ void Player::setexp(int new_xp)
 
         hp.second = hp.first += 100;
         mp.second = mp.first += 50;
+
+        return true;
     }
+
+    return false;
 }
 
 void Player::setDungeon(bool enter, int rank = 0)
@@ -251,7 +255,7 @@ bool Player::isInDungeon()
     return dungeon.first;
 }
 
-int Player::getdungeonrank()
+int Player::getDungeonRank()
 {
     return dungeon.second;
 }
