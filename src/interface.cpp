@@ -4,6 +4,8 @@ Battle *battle = NULL;
 
 Interface::Interface(Player* obj)
 {
+    interface_tick = SDL_GetTicks();
+
     main_interface = Texture::loadIMG("assets/interface/main.png");
 
     action_interface = Texture::loadIMG("assets/interface/action.png");
@@ -23,6 +25,8 @@ Interface::Interface(Player* obj)
         &Interface::third_mission,
         &Interface::fourth_mission,
     };
+
+    log = in_screen_log = "";
 }
 
 Interface::~Interface()
@@ -45,18 +49,21 @@ void Interface::toggle_battle(bool onoff, Enemy* enemy = NULL)
 
     if (!action_on) player->key_lock = false;
 
-    if (onoff)
-        battle = new Battle(enemy);
+    if (onoff) battle = new Battle(enemy);
 }
 
 void Interface::render()
 {
+    if (SDL_GetTicks() - interface_tick < 5000) {
+        int size = 10, x = 400 - (in_screen_log.length() * size/2);
+        Texture::drawText(in_screen_log.c_str(), {255,255,255}, size, x, 295);
+    }
+
     // action interface
     if (action_on) {
         player->key_lock = true;
         SDL_RenderCopy(Game::renderer, action_interface, NULL, NULL);
-        if (battle)
-            battle->init(this);
+        if (battle) battle->init(this);
     }
 
     // text proprieties
@@ -86,12 +93,18 @@ void Interface::render()
 
     // write quest log
     std::stringstream entry(log);
-    int y = 340;
     std::string line;
+    int y = 340;
     while (std::getline(entry, line)) {
         Texture::drawText(line.c_str(), fg, size, 20, y);
         y += 15;
     }
+}
+
+void Interface::set_screen_log(std::string slog)
+{
+    in_screen_log = slog;
+    interface_tick = SDL_GetTicks();
 }
 
 void Interface::events(const Uint8 *state)
