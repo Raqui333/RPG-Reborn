@@ -64,11 +64,11 @@ public:
     int getstr();
 
     std::pair<int, int> getexp();
-    void setexp(int);
+    bool setexp(int);
 
     void setDungeon(bool, int);
     bool isInDungeon();
-    int getdungeonrank();
+    int getDungeonRank();
 
     // time events
     Uint32 regen_time();
