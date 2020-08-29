@@ -31,9 +31,12 @@ Game::Game(const char* window_name, int height, int width)
         renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
         running = true;
+    } else {
+        std::cerr << "SDL_Init failed: " << SDL_GetError() << std::endl;
     }
 
-    TTF_Init();
+    if (TTF_Init() < 0)
+        std::cerr << "TTF_Init failed: " << TTF_GetError() << std::endl;
 
     map = new Map("assets/reborn.map", 99);
     player = new Player("assets/entities/character.png", 32, 32);
@@ -109,6 +112,7 @@ void Game::render()
 
     SDL_RenderClear(renderer);
     
+    // map
     map->render(player->getcam());
 
     // player
