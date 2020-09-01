@@ -3,12 +3,12 @@
 void Interface::quest_completed(int xp)
 {
     if (player->setexp(xp))
-        set_screen_log("You leveled up");
+        set_screen_log("Level up");
     else
-        set_screen_log("You earned " + std::to_string(xp) + " exp from a quest");
+        set_screen_log("Quest log updated");
 
-    current_quest++;
     to_completed = {0, 0};
+    current_quest++;
 }
 
 void Interface::first_mission()
