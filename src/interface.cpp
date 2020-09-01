@@ -54,7 +54,7 @@ void Interface::toggle_battle(bool onoff, Enemy* enemy = NULL)
 
 void Interface::render()
 {
-    if (SDL_GetTicks() - interface_tick < 5000) {
+    if (SDL_GetTicks() - interface_tick < 1000) {
         int size = 10, x = 400 - (in_screen_log.length() * size/2);
         Texture::drawText(in_screen_log.c_str(), {255,255,255}, size, x, 295);
     }
@@ -85,10 +85,10 @@ void Interface::render()
     Texture::drawText(exp.c_str(), fg, size, 55, 171);
 
     // hit and mana points
-    std::string hitpoints = std::to_string(player->gethp().first) + " / " + std::to_string(player->gethp().second);
+    std::string hitpoints = std::to_string(player->gethp().second) + " / " + std::to_string(player->gethp().first);
     Texture::drawText(hitpoints.c_str(), fg, size + 5, 85, 205);
 
-    std::string manapoints = std::to_string(player->getmp().first) + " / " + std::to_string(player->getmp().second);
+    std::string manapoints = std::to_string(player->getmp().second) + " / " + std::to_string(player->getmp().first);
     Texture::drawText(manapoints.c_str(), fg, size + 5, 85, 255);
 
     // write quest log
