@@ -81,9 +81,9 @@ void Battle::init(Interface* sys)
         enemy->reset_hp();
 
         if (sys->player->setexp(enemy->expfromdeath()))
-            sys->set_screen_log("You leveled up");
+            sys->set_screen_log("Level up");
         else
-            sys->set_screen_log("You earned " + std::to_string(enemy->expfromdeath()) + " exp");
+            sys->set_screen_log(std::to_string(enemy->expfromdeath()));
         
         sys->toggle_battle(false, NULL);
     } else if (sys->player->gethp().second <= 0) {
