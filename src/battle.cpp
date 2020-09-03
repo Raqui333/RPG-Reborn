@@ -27,8 +27,15 @@ void Battle::init(Interface* sys)
     enemy->render_in_battle();
 
     // hp bar
-    SDL_SetRenderDrawColor(Game::renderer, 0x17, 0xaa, 0x00, 0xAA);
     SDL_Rect hp_bar = {13, 13, (enemy->gethp().second * 100 / enemy->gethp().first) * 3, 20};
+
+    if (hp_bar.w < 25 * 3)
+        SDL_SetRenderDrawColor(Game::renderer, 0xaa, 0x00, 0x00, 0xAA);
+    else if (hp_bar.w < 50 * 3)
+        SDL_SetRenderDrawColor(Game::renderer, 0xaa, 0xa8, 0x00, 0xAA);
+    else // full life
+        SDL_SetRenderDrawColor(Game::renderer, 0x17, 0xaa, 0x00, 0xAA);
+        
     SDL_RenderFillRect(Game::renderer, &hp_bar);
 
     // name & rank
