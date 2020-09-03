@@ -60,22 +60,14 @@ SDL_Rect Player::getcam()
     return camera;
 }
 
-void Player::anime_sprite()
+void Player::anime_sprite(int direction)
 {
-    if (moveX != 0 || moveY != 0)
-        ++next_frame;
-
-    if (pos.y < sqmY)
-        current_frame = UP + next_frame;
-    else if (pos.x < sqmX)
-        current_frame = LEFT + next_frame;
-    else if (pos.y > sqmY)
-        current_frame = DOWN + next_frame;
-    else if (pos.x > sqmX)
-        current_frame = RIGHT + next_frame;
-
     if (next_frame >= FPS * 3 - 1)
         next_frame = 0;
+    else if (moveX != 0 || moveY != 0)
+        ++next_frame;
+
+    current_frame = direction + next_frame;
 }
 
 void Player::render()
@@ -87,8 +79,6 @@ void Player::render()
         {1, 67 , 32, 32}, {34, 67 , 32, 32}, {67, 67 , 32, 32},
         {1, 100, 32, 32}, {34, 100, 32, 32}, {67, 100, 32, 32},
     };
-
-    anime_sprite();
 
     SDL_RenderCopy(Game::renderer, player_texture, &clip[current_frame / FPS], &npos);
 }
@@ -151,15 +141,29 @@ void Player::move(std::vector<std::pair<int,int>> colliders)
         }
     };
     
-    if (moveY < 0)
+    if (moveY < 0) {
         movement(pos.y, moveY, sqmY, pos.h, UP);
-    else if (moveX < 0)
+        anime_sprite(this->UP);
+    } else if (moveX < 0) {
         movement(pos.x, moveX, sqmX, pos.w, LEFT);
-    else if (moveY > 0)
+        anime_sprite(this->LEFT);
+    } else if (moveY > 0) {
         movement(pos.y, moveY, sqmY, pos.h, DOWN);
-    else if (moveX > 0)
+        anime_sprite(this->DOWN);
+    } else if (moveX > 0) {
         movement(pos.x, moveX, sqmX, pos.w, RIGHT);
-    
+        anime_sprite(this->RIGHT);
+    } else {
+        if (current_frame < this->LEFT)
+            current_frame = this->UP;
+        else if (current_frame > this->LEFT && current_frame < this->DOWN)
+            current_frame = this->LEFT;
+        else if (current_frame > this->DOWN && current_frame < this->RIGHT)
+            current_frame = this->DOWN;
+        else if (current_frame > this->RIGHT)
+            current_frame = this->RIGHT;
+    }
+
     camera.x = pos.x - 384;
     camera.y = pos.y - 320;
 }
@@ -182,9 +186,7 @@ void Player::heal(int healing)
 void Player::dmg(int new_hp)
 {
     hp.second -= new_hp;
-
-    if (hp.second < 0)
-        hp.second = 0;
+    if (hp.second < 0) hp.second = 0;
 }
 
 void Player::regen()
@@ -206,9 +208,7 @@ std::pair<int,int> Player::getmp()
 void Player::mpused(int new_mp)
 {
     mp.second -= new_mp;
-    
-    if (mp.second < 0)
-        mp.second = 0;
+    if (mp.second < 0) mp.second = 0;
 }
 
 int Player::getlvl()
@@ -233,6 +233,7 @@ bool Player::setexp(int new_xp)
     if (exp.second >= exp.first) {
         exp.second = exp.second - exp.first;
         exp.first *= 2;
+
         strength++;
         level++;
 
