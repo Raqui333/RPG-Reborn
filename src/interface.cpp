@@ -42,7 +42,7 @@ void Interface::toggle_battle(bool onoff, Enemy* enemy = NULL)
 
     player->current_frame = player->DOWN;
 
-    player->npos.x = (action_on) ? 752 : 384;
+    player->npos.x = (action_on) ? 745 : 384;
     player->npos.y = (action_on) ? 412 : 320;
 
     player->is_in_action = action_on;
@@ -75,26 +75,47 @@ void Interface::render()
     SDL_RenderCopy(Game::renderer, main_interface, NULL, NULL);
 
     // status
-    std::string level = "Level " + std::to_string(player->getlvl());
-    Texture::drawText(level.c_str(), fg, size, 175, 50);
+    std::string level = "Lv. " + std::to_string(player->getlvl());
+    Texture::drawText(level.c_str(), fg, size, 203, 25);
 
-    Texture::drawText("Strength", fg, size, 175, 75);
-    Texture::drawText(std::to_string(player->getstr()).c_str(), fg, 10, 200, 95);
+    Texture::drawText(std::to_string(player->getstr()).c_str(), fg, size, 148, 70); // strength
 
-    std::string exp = std::to_string(player->getexp().second) + "/" + std::to_string(player->getexp().first);
-    Texture::drawText(exp.c_str(), fg, size, 55, 171);
+    // bars
+    SDL_Rect bar = {50, 128, 0, 15};
+    float width_percent = 1.7;
 
-    // hit and mana points
-    std::string hitpoints = std::to_string(player->gethp().second) + " / " + std::to_string(player->gethp().first);
-    Texture::drawText(hitpoints.c_str(), fg, size + 5, 85, 205);
+    bar.w = (player->gethp().second * 100 / player->gethp().first) * width_percent;
+    
+    if (bar.w < 45)
+        SDL_SetRenderDrawColor(Game::renderer, 0xaa, 0x00, 0x00, 0xAA);
+    else if (bar.w < 50 * width_percent)
+        SDL_SetRenderDrawColor(Game::renderer, 0xaa, 0xa8, 0x00, 0xAA);
+    else // full life
+        SDL_SetRenderDrawColor(Game::renderer, 0x17, 0xaa, 0x00, 0xAA);
 
-    std::string manapoints = std::to_string(player->getmp().second) + " / " + std::to_string(player->getmp().first);
-    Texture::drawText(manapoints.c_str(), fg, size + 5, 85, 255);
+    SDL_RenderFillRect(Game::renderer, &bar);
+
+    Texture::drawText(std::to_string(player->gethp().second).c_str(), fg, size, 224, bar.y - 3); // health
+
+    bar.y += 20;
+
+    bar.w = (player->getmp().second * 100 / player->getmp().first) * width_percent;
+    SDL_SetRenderDrawColor(Game::renderer, 0x33, 0x70, 0xd9, 0xAA);
+    SDL_RenderFillRect(Game::renderer, &bar);
+
+    Texture::drawText(std::to_string(player->getmp().second).c_str(), fg, size, 224, bar.y - 3); // mana
+
+    bar.y += 20;
+    bar.h = 10;
+
+    bar.w = (player->getexp().second * 100 / player->getexp().first) * width_percent;
+    SDL_SetRenderDrawColor(Game::renderer, 0xbf, 0x2a, 0x2a, 0xAA);
+    SDL_RenderFillRect(Game::renderer, &bar); // exp
 
     // write quest log
     std::stringstream entry(log);
     std::string line;
-    int y = 340;
+    int y = 240;
     while (std::getline(entry, line)) {
         Texture::drawText(line.c_str(), fg, size, 20, y);
         y += 15;
