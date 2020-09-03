@@ -16,7 +16,7 @@ class Player {
     int current_frame, next_frame;
     int FPS, UP, LEFT, DOWN, RIGHT;
 
-    void anime_sprite();
+    void anime_sprite(int);
 
     SDL_Rect camera;
 
